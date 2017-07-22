@@ -1,0 +1,7 @@
+2017-07-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* demo/analysis.R: First raw version
+
+	* DESCRIPTION (Package): Minimal first package
+
+

@@ -1,0 +1,14 @@
+Package: gswdt
+Type: Package
+Title: 'gunsales' Analysis via the 'data.table' Package
+Version: 0.0.1
+Author: Dirk Eddelbuettel
+Maintainer: Dirk Eddelbuettel <edd@debian.orgt>
+Description: An alternative implementation of the 'gunsales' analysis in
+ the eponymous package by Aisch, Keller and Eddelbuettel is provided 
+ using only the 'data.table' package.
+Imports: data.table, seasonal
+Suggests: gunsales
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
