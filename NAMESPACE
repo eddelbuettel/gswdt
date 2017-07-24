@@ -1,2 +1,3 @@
 exportPattern("^[[:alpha:]]+")
-import(data.table)
+importFrom(data.table, "data.table", "fread")
+importFrom("seasonal", "seas", "final")
