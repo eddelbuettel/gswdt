@@ -1,11 +1,14 @@
 library(seasonal)
 suppressMessages(library(data.table))
 
+verbose <- FALSE
+
 replace_outer_zeros <- function(x) {
     for (i in 1:length(x)) if (x[i] != 0) break else x[i] <- NA
     for (i in length(x):1) if (x[i] != 0) break else x[i] <- NA
     x
 }
+
 state_ts <- function(data, statename, column="guns_sold", outer_zeros_to_na=TRUE) {
     d <- data[state == statename & (year >= 2000), c("year", "month.num", column), with=FALSE]
     setnames(d, c("year", "month", "value"))
@@ -37,14 +40,9 @@ dt2ts <- function(dt) {
 }
 
 if (requireNamespace("gunsales", quietly=TRUE)) {
-    alldata <- read.csv(system.file("rawdata/ncis_bystate_bymonth_bytype.csv", package="gunsales"),
-                        na = "#N/A", stringsAsFactors=FALSE)
-    poptotal <- read.csv(system.file("rawdata/population.csv", package="gunsales"),
-                         stringsAsFactors=FALSE)
-    setDT(alldata)
-    setDT(poptotal)
+    alldata <- fread(system.file("rawdata/ncis_bystate_bymonth_bytype.csv", package="gunsales"))
+    poptotal <- fread(system.file("rawdata/population.csv", package="gunsales"))
 }
-
 
 # alldata <- alldata %>% mutate(guns_sold=(handgun + longgun) * 1.1 + multiple_corrected * 2)
 alldata[, guns_sold := (handgun + longgun) * 1.1 + multiple_corrected * 2]
@@ -145,4 +143,6 @@ out_data <- out_data[ ts2dt(dchandgunPct, "dc_handguns_per_100k_national_sales")
 missouri <- state_data(alldata, 'Missouri', normalize = FALSE, adj_seasonal = FALSE)
 missouri.avg_pre_2007 <- mean(missouri[73:84])
 missouri.avg_post_2008 <- mean(missouri[97:108])
-print(paste('Increase in monthly gun sales in Missouri =', round(missouri.avg_post_2008 - missouri.avg_pre_2007, digits=2)))
+if (verbose)
+    cat("Increase in monthly gun sales in Missouri =",
+        round(missouri.avg_post_2008 - missouri.avg_pre_2007, digits=2), "\n")
