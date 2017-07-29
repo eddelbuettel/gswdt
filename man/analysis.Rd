@@ -27,10 +27,10 @@ Run Statistical Analysis of Monthly Background Checks of Gun Purchase
 }
 }
 \seealso{
-The NY Times article presenting this analsysi undertaken by this package is
+The NY Times article presenting this analsysi undertaken by the \code{gunsales} package is
 at \url{http://www.nytimes.com/interactive/2015/12/10/us/gun-sales-terrorism-obama-restrictions.html?}
 }
 \author{
-Gregor Aisch and Josh Keller wrote the R code; Dirk Eddelbuettel created
-and maintains the package.
+Gregor Aisch and Josh Keller wrote the (initial) R code; Dirk Eddelbuettel created
+and maintains the \code{gunsales} package as well as this package.
 }
