@@ -18,6 +18,7 @@
 ##'   gs <- analysis()
 ##'   gunsales::plot_gunsales(gs)
 ##'   gunsales::ggplot_gunsales(gs)
+##'   all.equal(gs, gunsales::analysis())
 ##' }
 analysis <- function(debug=FALSE, verbose=FALSE) {
     .hasData()
@@ -45,22 +46,20 @@ analysis <- function(debug=FALSE, verbose=FALSE) {
                     guns_total_per_1000_scaled=round(as.vector(totalSeasScaled), digits=3))]
 
     ## create a temporary matrix for computing the handgun_share and longgun_share columns
-    out_data[, `:=`(handgun=final(seas(state_ts(alldata, "Totals", "handgun"))),
-                    longgun=final(seas(state_ts(alldata, "Totals", "longgun"))),
-                    #other=final(seas(state_ts(alldata, "Totals", "other"))),   ## TODO: needs work
-                    multiple=final(seas(state_ts(alldata, "Totals", "multiple_corrected"))))]
-    ot <- with(alldata[state=="Totals" & year >= 2000, list(year=year, month=month.num, value=other)], ts(value, start=c(year[1], month[1]), frequency=12))
-    ot[ot==0] <- NA
-    out_data[, other:=as.vector(ot)]
-    out_data[ is.na(other), other:=0]
+    out_data[, `:=`(handgun=as.vector(final(seas(state_ts(alldata, "Totals", "handgun")))),
+                    longgun=as.vector(final(seas(state_ts(alldata, "Totals", "longgun")))),
+                    other=as.vector(c(ts(rep(0, 113), start=c(2000,1), frequency=12),
+                                      final(seas(state_ts(alldata, "Totals", "other"))))),
+                    multiple=as.vector(final(seas(state_ts(alldata, "Totals", "multiple_corrected")))))]
 
-    out_data[, `:=`(handgun_share=round(handgun / (handgun+longgun+other+multiple*0.5), 4),
-                    longgun_share=round(longgun / (handgun+longgun+other+multiple*0.5), 4))]
+    out_data[, `:=`(longgun_share=round(longgun / (handgun+longgun+other+multiple*0.5), 4),
+                    handgun_share=round(handgun / (handgun+longgun+other+multiple*0.5), 4))]
 
     ## plot percent of national for selected states
     show_states <- c('New Jersey', 'Maryland', 'Georgia', 'Louisiana', 'Mississippi', 'Missouri')
     for (s in show_states) {
-        out_data <- out_data[ ts2dt(state_data(alldata, s, total, totalSeas), s), on=c("year", "month")]
+        out_data <- out_data[round(ts2dt(state_data(alldata, s, total, totalSeas), s),3),
+                             on=c("year", "month")]
     }
 
     ## compute handgun sales for DC: handung * 1.1 + multiple
@@ -71,7 +70,7 @@ analysis <- function(debug=FALSE, verbose=FALSE) {
     dchandgunPct <- dchandgun / totalHandgun * 100000
 
     ## merge with out_data
-    out_data <- out_data[ ts2dt(dchandgunPct, "dc_handguns_per_100k_national_sales"), on=c("year", "month")]
+    out_data <- out_data[ ts2dt(round(dchandgunPct, 1), "dc_handguns_per_100k_national_sales"), on=c("year", "month")]
 
     missouri <- state_data(alldata, 'Missouri', normalize = FALSE, adj_seasonal = FALSE)
     miss.avg_pre_2007 <- mean(missouri[73:84])

@@ -1,3 +1,9 @@
+2017-07-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/analysis.R (analysis): Rounding and column ordering as in
+	gunsales::analysis; added 'all.equal()' comparison to example
+	* man/analysis.Rd: Added 'all.equal()' comparison to example
+
 2017-07-29  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/analysis.R (analysis): Moved helper functions to end and

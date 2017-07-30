@@ -24,6 +24,7 @@ Run Statistical Analysis of Monthly Background Checks of Gun Purchase
   gs <- analysis()
   gunsales::plot_gunsales(gs)
   gunsales::ggplot_gunsales(gs)
+  all.equal(gs, gunsales::analysis())
 }
 }
 \seealso{
